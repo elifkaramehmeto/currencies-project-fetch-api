@@ -17,8 +17,8 @@
       <div class="button-container">
         <button id= "refreshButton" onclick="refreshCurrencies()">Refresh
           <div id="countdown"></div>
-        
         </button>
+        <button id="historyButton" onclick="fetchHistory()">History</button>
      
       </div>
       <div class="currency-wrap"></div>
@@ -101,7 +101,28 @@ function enableRefreshButton() {
   const refreshButton = document.getElementById("refreshButton");
   refreshButton.disabled = false;
 }
+function fetchHistory() {
+  const currencyWrap = document.querySelector(".currency-wrap");
+  currencyWrap.innerHTML = "";
 
+  fetch(
+    "https://api.freecurrencyapi.com/v1/historical?apikey=fca_live_YjF7k0eiIpmXTTegvSWwIWT8Td0I4A9clkGx23Iw&currencies=EUR%2CUSD%2CCAD&date_from=2023-08-10T19%3A26%3A38.261Z&date_to=2023-09-09T19%3A26%3A38.262Z"
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data.data);
+      showHistory(data);
+    });
+}
+
+function showHistory(data) {
+  const historicalData = data.data;
+  const currencyWrap = document.querySelector(".currency-wrap");
+
+  for (let currency in historicalData) {
+    createCurrency(currency, historicalData[currency]);
+  }
+}
 
 </script>
 <style>
@@ -165,12 +186,10 @@ function enableRefreshButton() {
     display: flex;
     gap: 10px;
     font-size: 16px!important;
+    margin-left: 10px;
 
   }
   .button-container button:disabled{
     opacity: 0.3;
-  }
-  #countdown{
-    
   }
 </style>
